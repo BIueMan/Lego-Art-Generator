@@ -56,5 +56,5 @@ class downsample:
         return resized_img
     
 
-def reshape(image: np.ndarray, size: List[int], shift: List[int])-> np.ndarray:
+def sliding_image(image: np.ndarray, size: List[int], shift: List[int])-> np.ndarray:
     return image[shift[0] + size[0], shift[1] + size[1]]

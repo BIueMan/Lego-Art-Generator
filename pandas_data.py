@@ -12,6 +12,7 @@ def get_color_table(color_table_path:str = 'Data/ColorStud/ColorTable.xlsx',
     color_table = pd.read_excel(color_table_path)   # main table
     stud_color = pd.read_excel(stud_color_path)     # sub table
     round_color = pd.read_excel(round_color_path)   # sub table
+    
     color_table = pd.DataFrame(color_table)
     stud_color = pd.DataFrame(stud_color)
     round_color = pd.DataFrame(round_color)
