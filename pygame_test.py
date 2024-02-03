@@ -4,8 +4,8 @@ import os
 
 def create_screen(image_rect):
     # Set up display
-    window_width = image_rect.width + 200
-    window_height = max(image_rect.height, 600)
+    window_width = image_rect.width + 50
+    window_height = image_rect.height
     screen = pygame.display.set_mode((window_width, window_height))
     pygame.display.set_caption("Point Selector")
     return screen
@@ -19,14 +19,19 @@ def create_buttons(image_rect):
     button_height = 40
     for i in range(7):
         button_rect = pygame.Rect(image_rect.width + 10, 50 + i * (button_height + 10), 50, button_height)
-        buttons.append((button_rect, i, font.render(str(i), True, (0, 0, 0))))
+        buttons.append({'rect':button_rect, 'font':font.render(str(i), True, (0, 0, 0)), 'color': (0,255,0)})
     return buttons
+
+def get_pixel_color(image, pos):
+    # Get the color of the pixel at the specified position
+    color = image.get_at(pos)
+    return color
 
 def run_app(image, image_rect, screen, buttons):
     # List to store selected points
-    selected_points = []
 
     running = True
+    selected_butten = 0
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -36,26 +41,32 @@ def run_app(image, image_rect, screen, buttons):
                 mouse_pos = event.pos
 
                 # Check if any button is clicked
-                for button_rect, button_number, _ in buttons:
-                    if button_rect.collidepoint(mouse_pos):
-                        print("Button Clicked:", button_number)
+                for num, button in enumerate(buttons):
+                    if button['rect'].collidepoint(mouse_pos):
+                        # print("Button Clicked:", num)
+                        selected_butten = num
 
                 # Check if clicked on the image area
                 if image_rect.collidepoint(mouse_pos):
                     # Add point to the list
-                    selected_points.append(mouse_pos)
-                    print("Selected Points:", selected_points)
+                    buttons[selected_butten]['location'] = mouse_pos
+                    buttons[selected_butten]['color'] = get_pixel_color(image, mouse_pos)[:3]
+                    print(f'num: {selected_butten} = {mouse_pos}, color - {buttons[selected_butten]["color"]}')
 
         screen.blit(image, image_rect)
 
         # Draw red dots at selected points
-        for point in selected_points:
-            pygame.draw.circle(screen, (255, 0, 0), point, 5)
+        for num, button in enumerate(buttons):
+            if 'location' in buttons[num]:
+                pygame.draw.circle(screen, (255, 0, 0), buttons[num]['location'], 5)
 
         # Draw buttons
-        for button_rect, _, button_text in buttons:
-            pygame.draw.rect(screen, (0, 255, 0), button_rect)
-            screen.blit(button_text, button_rect.center)
+        for num, button in enumerate(buttons):
+            pygame.draw.rect(screen, button['color'], button['rect'])
+            if selected_butten == num:
+                pygame.draw.rect(screen, (255, 0, 0), button['rect'], 3)
+            screen.blit(button['font'], button['rect'].center)
+
 
         pygame.display.flip()
 
