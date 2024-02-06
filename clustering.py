@@ -1,10 +1,29 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+from sklearn.cluster import KMeans
 from PIL import Image
 from scipy.spatial.distance import cdist
 
+def get_kmean_color(original_image, k=5):
+    # Load the image
+    original_array = np.array(original_image)
+    height, width, _ = original_array.shape
 
+    # Reshape the array for clustering
+    reshaped_array = original_array.reshape((height * width, 3))
+
+    # Apply K-means clustering
+    kmeans = KMeans(n_clusters=k, random_state=42)
+    kmeans.fit(reshaped_array)
+
+    # Get cluster centers (representative colors)
+    cluster_centers = kmeans.cluster_centers_.astype(int)
+
+    # Assign each pixel to the closest cluster center
+    labels = kmeans.predict(reshaped_array)
+    clustered_array = cluster_centers[labels].reshape((height, width, 3))
+
+    return cluster_centers, clustered_array
 
 def cluster_points(points, cluster):
     distances_matrix = cdist(cluster, points, metric='euclidean')
@@ -76,11 +95,7 @@ if __name__ == "__main__":
     point_on_image = ([100, 300], [10, 10], [200, 200])
     
     points_to_cluster = np.array([np.array(original_image)[point[0], [point[1]]][0].tolist() for point in point_on_image])
-    points_to_cluster = np.array([  [216, 135, 121],
-                                    [156,  68,  90],
-                                    [201,  98,  98],
-                                    [229, 186, 164],
-                                    [104,  33,  73]])
+    points_to_cluster, _ = get_kmean_color(original_image, k=7)
     # flaten image
     point_of_image = original_array.reshape((height * width, 3))
     

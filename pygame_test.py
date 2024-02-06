@@ -4,22 +4,24 @@ import os
 
 def create_screen(image_rect):
     # Set up display
-    window_width = image_rect.width + 50
+    window_width = image_rect.width + 200
     window_height = image_rect.height
     screen = pygame.display.set_mode((window_width, window_height))
     pygame.display.set_caption("Point Selector")
     return screen
 
-def create_buttons(image_rect):
+def create_buttons(image_rect, k, init_button_color = None):
     # Create font for button labels
     font = pygame.font.Font(None, 36)
 
     # Create buttons
     buttons = []
     button_height = 40
-    for i in range(7):
+    for i in range(k):
         button_rect = pygame.Rect(image_rect.width + 10, 50 + i * (button_height + 10), 50, button_height)
-        buttons.append({'rect':button_rect, 'font':font.render(str(i), True, (0, 0, 0)), 'color': (0,255,0)})
+        color = (0,255,0) if not init_button_color else init_button_color['color'][i]
+        loc = None if not init_button_color else init_button_color['loc'][i]
+        buttons.append({'rect':button_rect, 'font':font.render(str(i), True, (0, 0, 0)), 'color': color, 'loc': loc})
     return buttons
 
 def get_pixel_color(image, pos):
@@ -33,6 +35,7 @@ def run_app(image, image_rect, screen, buttons):
     running = True
     selected_butten = 0
     while running:
+        screen.fill((0, 0, 0))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -49,23 +52,32 @@ def run_app(image, image_rect, screen, buttons):
                 # Check if clicked on the image area
                 if image_rect.collidepoint(mouse_pos):
                     # Add point to the list
-                    buttons[selected_butten]['location'] = mouse_pos
+                    buttons[selected_butten]['loc'] = mouse_pos
                     buttons[selected_butten]['color'] = get_pixel_color(image, mouse_pos)[:3]
                     print(f'num: {selected_butten} = {mouse_pos}, color - {buttons[selected_butten]["color"]}')
 
         screen.blit(image, image_rect)
 
         # Draw red dots at selected points
+        font = pygame.font.Font(None, 24)
         for num, button in enumerate(buttons):
-            if 'location' in buttons[num]:
-                pygame.draw.circle(screen, (255, 0, 0), buttons[num]['location'], 5)
+            if buttons[num]['loc'] != None:
+                pygame.draw.circle(screen, (255, 0, 0), buttons[num]['loc'], 5)
+
+                text_surface = font.render(str(num), True, (255, 255, 255))
+                text_rect = text_surface.get_rect(center=(button['loc'][0] + 15, button['loc'][1] - 15))
+                screen.blit(text_surface, text_rect)
 
         # Draw buttons
+        font = pygame.font.Font(None, 24)
         for num, button in enumerate(buttons):
             pygame.draw.rect(screen, button['color'], button['rect'])
             if selected_butten == num:
                 pygame.draw.rect(screen, (255, 0, 0), button['rect'], 3)
             screen.blit(button['font'], button['rect'].center)
+            text_surface = font.render(f"({button['color'][0]}, {button['color'][1]}, {button['color'][2]})", True, (255, 255, 255))
+            text_rect = text_surface.get_rect(center=(button['rect'][0]+button['rect'][2]+60, button['rect'][1]+round(button['rect'][3]/2)))
+            screen.blit(text_surface, text_rect)
 
 
         pygame.display.flip()
@@ -74,6 +86,27 @@ def run_app(image, image_rect, screen, buttons):
     sys.exit()
 
 def main():
+    # first get init kmean cluster from the image
+    import numpy as np
+    from PIL import Image
+    from clustering import get_kmean_color
+    import cv2
+
+    image_path = "Data/Lenna.png"
+    original_image = Image.open(image_path)
+    original_array = np.array(original_image.resize([16*3, 16*3]))
+    original_image = np.array(original_image)
+    k = 7
+
+    points_to_cluster, _ = get_kmean_color(original_array, k)
+    init_button_color = {'color': [], 'loc': []}
+    for _, cluster_color in enumerate(points_to_cluster):
+        image_err = np.linalg.norm(original_image-cluster_color, axis=-1)
+
+        loc = np.unravel_index(np.argmin(image_err), image_err.shape)
+        init_button_color['loc'].append(loc)
+        init_button_color['color'].append(original_image[loc])
+
     pygame.init()
 
     # Input image
@@ -85,7 +118,7 @@ def main():
     screen = create_screen(image_rect)
 
     # Create buttons
-    buttons = create_buttons(image_rect)
+    buttons = create_buttons(image_rect, k, init_button_color)
 
     # Run the app
     run_app(image, image_rect, screen, buttons)
