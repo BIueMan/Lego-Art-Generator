@@ -1,6 +1,9 @@
 import pygame
 import sys
 import os
+import numpy as np
+from sklearn.cluster import KMeans
+from clustering import get_kmean_color, cluster_points
 
 def create_screen(image_rect):
     # Set up display
@@ -29,7 +32,7 @@ def get_pixel_color(image, pos):
     color = image.get_at(pos)
     return color
 
-def run_app(image, clustered_pygame, image_rect, screen, buttons):
+def run_app(image, clustered_pygame, original_array, image_rect, screen, buttons):
     # List to store selected points
     cluster_rect = clustered_pygame.get_rect()
     cluster_rect[1] = cluster_rect[3]
@@ -48,7 +51,6 @@ def run_app(image, clustered_pygame, image_rect, screen, buttons):
                 # Check if any button is clicked
                 for num, button in enumerate(buttons):
                     if button['rect'].collidepoint(mouse_pos):
-                        # print("Button Clicked:", num)
                         selected_butten = num
 
                 # Check if clicked on the image area
@@ -56,6 +58,16 @@ def run_app(image, clustered_pygame, image_rect, screen, buttons):
                     # Add point to the list
                     buttons[selected_butten]['loc'] = mouse_pos
                     buttons[selected_butten]['color'] = get_pixel_color(image, mouse_pos)[:3]
+
+                    # Update pixeletad lenna
+                    color_list = np.array([button['color'] for button in buttons])
+                    cluster_labels = cluster_points(original_array.reshape(-1, 3), color_list)
+                    clustered_array = color_list[cluster_labels].reshape(original_array.shape)
+                    image_bytes = np.ascontiguousarray(clustered_array.astype(np.uint8)).tobytes()
+                    clustered_pygame = pygame.image.frombuffer(image_bytes, clustered_array.shape[:2], "RGB")
+                    clustered_pygame = pygame.transform.scale(clustered_pygame, image.get_size())
+                    cluster_rect = clustered_pygame.get_rect()
+                    cluster_rect[1] = cluster_rect[3]
                     print(f'num: {selected_butten} = {mouse_pos}, color - {buttons[selected_butten]["color"]}')
 
         screen.blit(image, image_rect)
@@ -92,7 +104,7 @@ def main():
     # first get init kmean cluster from the image
     import numpy as np
     from PIL import Image
-    from clustering import get_kmean_color
+    from clustering import get_kmean_color, cluster_points
     import cv2
 
     image_path = "Data/Lenna.png"
@@ -128,7 +140,7 @@ def main():
     buttons = create_buttons(image_rect, k, init_button_color)
 
     # Run the app
-    run_app(image, clustered_pygame, image_rect, screen, buttons)
+    run_app(image, clustered_pygame, original_array, image_rect, screen, buttons)
 
 if __name__ == "__main__":
     main()
