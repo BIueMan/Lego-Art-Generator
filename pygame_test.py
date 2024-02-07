@@ -5,7 +5,7 @@ import os
 def create_screen(image_rect):
     # Set up display
     window_width = image_rect.width + 200
-    window_height = image_rect.height
+    window_height = 2*image_rect.height
     screen = pygame.display.set_mode((window_width, window_height))
     pygame.display.set_caption("Point Selector")
     return screen
@@ -29,8 +29,10 @@ def get_pixel_color(image, pos):
     color = image.get_at(pos)
     return color
 
-def run_app(image, image_rect, screen, buttons):
+def run_app(image, clustered_pygame, image_rect, screen, buttons):
     # List to store selected points
+    cluster_rect = clustered_pygame.get_rect()
+    cluster_rect[1] = cluster_rect[3]
 
     running = True
     selected_butten = 0
@@ -57,6 +59,7 @@ def run_app(image, image_rect, screen, buttons):
                     print(f'num: {selected_butten} = {mouse_pos}, color - {buttons[selected_butten]["color"]}')
 
         screen.blit(image, image_rect)
+        screen.blit(clustered_pygame, cluster_rect)
 
         # Draw red dots at selected points
         font = pygame.font.Font(None, 24)
@@ -94,11 +97,14 @@ def main():
 
     image_path = "Data/Lenna.png"
     original_image = Image.open(image_path)
-    original_array = np.array(original_image.resize([16*3, 16*3]))
+    original_array = np.array(original_image.resize([16*4, 16*4]))
     original_image = np.array(original_image)
     k = 7
 
-    points_to_cluster, _ = get_kmean_color(original_array, k)
+    points_to_cluster, clustered_array = get_kmean_color(original_array, k)
+    image_bytes = np.ascontiguousarray(clustered_array.astype(np.uint8)).tobytes()
+    clustered_pygame = pygame.image.frombuffer(image_bytes, clustered_array.shape[:2], "RGB")
+
     init_button_color = {'color': [], 'loc': []}
     for _, cluster_color in enumerate(points_to_cluster):
         image_err = np.linalg.norm(original_image-cluster_color, axis=-1)
@@ -113,6 +119,7 @@ def main():
     image_path = os.path.join("Data", "Lenna.png")
     image = pygame.image.load(image_path)
     image_rect = image.get_rect()
+    clustered_pygame = pygame.transform.scale(clustered_pygame, image.get_size())
 
     # Create screen
     screen = create_screen(image_rect)
@@ -121,7 +128,7 @@ def main():
     buttons = create_buttons(image_rect, k, init_button_color)
 
     # Run the app
-    run_app(image, image_rect, screen, buttons)
+    run_app(image, clustered_pygame, image_rect, screen, buttons)
 
 if __name__ == "__main__":
     main()
