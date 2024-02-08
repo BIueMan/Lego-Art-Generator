@@ -20,11 +20,15 @@ def create_buttons(image_rect, k, init_button_color = None):
     # Create buttons
     buttons = []
     button_height = 40
-    for i in range(k):
+    for i in range(k+1):
         button_rect = pygame.Rect(image_rect.width + 10, 50 + i * (button_height + 10), 50, button_height)
-        color = (0,255,0) if not init_button_color else init_button_color['color'][i]
-        loc = None if not init_button_color else init_button_color['loc'][i]
-        buttons.append({'rect':button_rect, 'font':font.render(str(i), True, (0, 0, 0)), 'color': color, 'loc': loc})
+        if i < k:
+            color = (0,255,0) if not init_button_color else init_button_color['color'][i]
+            loc = None if not init_button_color else init_button_color['loc'][i]
+            buttons.append({'rect':button_rect, 'font':font.render(str(i), True, (0, 0, 0)), 'color': color, 'loc': loc})
+        else:
+            buttons.append({'rect':button_rect, 'font':font.render('+', True, (0, 0, 0)), 'color': (0,255,0), 'loc': None})
+
     return buttons
 
 def get_pixel_color(image, pos):
@@ -58,9 +62,14 @@ def run_app(image, clustered_pygame, original_array, image_rect, screen, buttons
                     # Add point to the list
                     buttons[selected_butten]['loc'] = mouse_pos
                     buttons[selected_butten]['color'] = get_pixel_color(image, mouse_pos)[:3]
+                    if selected_butten == len(buttons) -1:
+                        button_height = buttons[-1]['rect'][3]
+                        button_rect = pygame.Rect(image_rect.width + 10, 50 + len(buttons) * (button_height + 10), 50, button_height)
+                        buttons.append({'rect':button_rect, 'font':font.render('+', True, (0, 0, 0)), 'color': (0,255,0), 'loc': None})
+
 
                     # Update pixeletad lenna
-                    color_list = np.array([button['color'] for button in buttons])
+                    color_list = np.array([button['color'] for button in buttons[:-1]])
                     cluster_labels = cluster_points(original_array.reshape(-1, 3), color_list)
                     clustered_array = color_list[cluster_labels].reshape(original_array.shape)
                     image_bytes = np.ascontiguousarray(clustered_array.astype(np.uint8)).tobytes()
