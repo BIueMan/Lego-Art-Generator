@@ -2,7 +2,6 @@ import pygame
 import sys
 import os
 import numpy as np
-from sklearn.cluster import KMeans
 from clustering import get_kmean_color, cluster_points
 
 def create_screen(image_rect):
@@ -40,6 +39,9 @@ def run_app(image, clustered_pygame, original_array, image_rect, screen, buttons
     # List to store selected points
     cluster_rect = clustered_pygame.get_rect()
     cluster_rect[1] = cluster_rect[3]
+    # init output
+    color_list = np.array([button['color'] for button in buttons[:-1]])
+    cluster_labels = cluster_points(original_array.reshape(-1, 3), color_list)
 
     running = True
     selected_butten = 0
@@ -63,6 +65,8 @@ def run_app(image, clustered_pygame, original_array, image_rect, screen, buttons
                     buttons[selected_butten]['loc'] = mouse_pos
                     buttons[selected_butten]['color'] = get_pixel_color(image, mouse_pos)[:3]
                     if selected_butten == len(buttons) -1:
+                        font = pygame.font.Font(None, 36)
+                        buttons[-1]['font'] = font.render(str(len(buttons)-1), True, (0, 0, 0))
                         button_height = buttons[-1]['rect'][3]
                         button_rect = pygame.Rect(image_rect.width + 10, 50 + len(buttons) * (button_height + 10), 50, button_height)
                         buttons.append({'rect':button_rect, 'font':font.render('+', True, (0, 0, 0)), 'color': (0,255,0), 'loc': None})
@@ -107,20 +111,18 @@ def run_app(image, clustered_pygame, original_array, image_rect, screen, buttons
         pygame.display.flip()
 
     pygame.quit()
-    sys.exit()
+    return color_list, cluster_labels.reshape(original_array.shape[:2])
 
 def main():
     # first get init kmean cluster from the image
     import numpy as np
     from PIL import Image
-    from clustering import get_kmean_color, cluster_points
-    import cv2
 
     image_path = "Data/Lenna.png"
     original_image = Image.open(image_path)
     original_array = np.array(original_image.resize([16*4, 16*4]))
     original_image = np.array(original_image)
-    k = 7
+    k = 20
 
     points_to_cluster, clustered_array = get_kmean_color(original_array, k)
     image_bytes = np.ascontiguousarray(clustered_array.astype(np.uint8)).tobytes()
@@ -149,7 +151,11 @@ def main():
     buttons = create_buttons(image_rect, k, init_button_color)
 
     # Run the app
-    run_app(image, clustered_pygame, original_array, image_rect, screen, buttons)
+    color_list, cluster_labels = run_app(image, clustered_pygame, original_array, image_rect, screen, buttons)
+    for idx in range(color_list.shape[0]):
+        text = f'color - {color_list[idx]}, studs - {np.sum(cluster_labels == idx)}'
+        r, g, b = color_list[idx].tolist()
+        print(f"\x1b[38;2;{r};{g};{b}m{text}\x1b[0m")
 
 if __name__ == "__main__":
     main()
