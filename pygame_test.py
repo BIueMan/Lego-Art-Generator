@@ -12,7 +12,10 @@ def create_screen(image_rect):
     pygame.display.set_caption("Point Selector")
     return screen
 
-def create_buttons(image_rect, k, init_button_color = None):
+def create_buttons(image_rect, init_button_color = None, k = None):
+    if not k:
+        k = len(init_button_color['color'])
+
     # Create font for button labels
     font = pygame.font.Font(None, 36)
 
@@ -35,7 +38,12 @@ def get_pixel_color(image, pos):
     color = image.get_at(pos)
     return color
 
-def run_app(image, clustered_pygame, original_array, image_rect, screen, buttons):
+def run_app(pygame_image, clustered_pygame, original_array, init_button_color, keep_cluster = False):
+    image_rect = pygame_image.get_rect()
+    # Create screen
+    screen = create_screen(image_rect)
+    # Create buttons
+    buttons = create_buttons(image_rect, init_button_color)
     # List to store selected points
     cluster_rect = clustered_pygame.get_rect()
     cluster_rect[1] = cluster_rect[3]
@@ -63,7 +71,7 @@ def run_app(image, clustered_pygame, original_array, image_rect, screen, buttons
                 if image_rect.collidepoint(mouse_pos):
                     # Add point to the list
                     buttons[selected_butten]['loc'] = mouse_pos
-                    buttons[selected_butten]['color'] = get_pixel_color(image, mouse_pos)[:3]
+                    buttons[selected_butten]['color'] = get_pixel_color(pygame_image, mouse_pos)[:3]
                     if selected_butten == len(buttons) -1:
                         font = pygame.font.Font(None, 36)
                         buttons[-1]['font'] = font.render(str(len(buttons)-1), True, (0, 0, 0))
@@ -74,16 +82,17 @@ def run_app(image, clustered_pygame, original_array, image_rect, screen, buttons
 
                     # Update pixeletad lenna
                     color_list = np.array([button['color'] for button in buttons[:-1]])
-                    cluster_labels = cluster_points(original_array.reshape(-1, 3), color_list)
+                    if not keep_cluster:
+                        cluster_labels = cluster_points(original_array.reshape(-1, 3), color_list)
                     clustered_array = color_list[cluster_labels].reshape(original_array.shape)
                     image_bytes = np.ascontiguousarray(clustered_array.astype(np.uint8)).tobytes()
                     clustered_pygame = pygame.image.frombuffer(image_bytes, clustered_array.shape[:2], "RGB")
-                    clustered_pygame = pygame.transform.scale(clustered_pygame, image.get_size())
+                    clustered_pygame = pygame.transform.scale(clustered_pygame, pygame_image.get_size())
                     cluster_rect = clustered_pygame.get_rect()
                     cluster_rect[1] = cluster_rect[3]
                     print(f'num: {selected_butten} = {mouse_pos}, color - {buttons[selected_butten]["color"]}')
 
-        screen.blit(image, image_rect)
+        screen.blit(pygame_image, image_rect)
         screen.blit(clustered_pygame, cluster_rect)
 
         # Draw red dots at selected points
@@ -122,7 +131,7 @@ def main():
     original_image = Image.open(image_path)
     original_array = np.array(original_image.resize([16*4, 16*4]))
     original_image = np.array(original_image)
-    k = 20
+    k = 9
 
     points_to_cluster, clustered_array = get_kmean_color(original_array, k)
     image_bytes = np.ascontiguousarray(clustered_array.astype(np.uint8)).tobytes()
@@ -140,18 +149,28 @@ def main():
 
     # Input image
     image_path = os.path.join("Data", "Lenna.png")
-    image = pygame.image.load(image_path)
-    image_rect = image.get_rect()
-    clustered_pygame = pygame.transform.scale(clustered_pygame, image.get_size())
-
-    # Create screen
-    screen = create_screen(image_rect)
-
-    # Create buttons
-    buttons = create_buttons(image_rect, k, init_button_color)
-
+    pygame_image = pygame.image.load(image_path)
+    clustered_pygame = pygame.transform.scale(clustered_pygame, pygame_image.get_size())
     # Run the app
-    color_list, cluster_labels = run_app(image, clustered_pygame, original_array, image_rect, screen, buttons)
+    color_list, cluster_labels = run_app(pygame_image, clustered_pygame, original_array, init_button_color)
+    
+    pygame.init()
+    image_path = os.path.join("Data", "lego_color_flat.png")
+    pygame_image = pygame.image.load(image_path)
+    pygame_image = pygame.transform.scale(pygame_image, (500, 500))
+    # update buttton color
+    for idx in range(len(init_button_color['color'])):
+        init_button_color['color'][idx] = color_list[idx]
+        init_button_color['loc'][idx] = (-1, -1)
+    original_array = color_list[cluster_labels.reshape(-1)].reshape(original_array.shape)
+    image_bytes = np.ascontiguousarray(original_array.astype(np.uint8)).tobytes()
+    clustered_pygame = pygame.image.frombuffer(image_bytes, original_array.shape[:2], "RGB")
+    clustered_pygame = pygame.transform.scale(clustered_pygame, pygame_image.get_size())
+        
+    # Run the app
+    color_list, cluster_labels = run_app(pygame_image, clustered_pygame, original_array, init_button_color, keep_cluster = True)
+    
+    
     for idx in range(color_list.shape[0]):
         text = f'color - {color_list[idx]}, studs - {np.sum(cluster_labels == idx)}'
         r, g, b = color_list[idx].tolist()

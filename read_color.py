@@ -5,11 +5,11 @@ import pandas as pd
 pygame.init()
 
 # Read the Excel file
-df = pd.read_excel("Data\ColorStud\AliexpressColor.xlsx")
+df = pd.read_excel('Data/ColorStud/55-lego-colors.xlsx')
 
 # Define screen dimensions and colors
-screen_width = 550
-screen_height = 550
+screen_width = 800
+screen_height = 500
 rect_width = 87.5  # increased by 25%
 rect_height = 62.5  # increased by 25%
 margin = 10
@@ -48,12 +48,13 @@ while running:
             running = False
 
     # Draw rectangles with colors from the DataFrame
-    for i in range(6):
-        for j in range(7):
-            color_index = i * 6 + j
-            if color_index < len(df):
-                color = tuple(int(df["RGB"][color_index][1:][k:k+2], 16) for k in range(0, 6, 2))
-                draw_rect(j * (rect_width + margin), i * (rect_height + margin), color, df["Name"][color_index])
+    per_line = 7
+    for idx in range(len(df)):
+        i, j = idx%per_line, (int)(idx/per_line)
+        color_index = i * (per_line+1) + j
+        if color_index < len(df):
+            color = tuple(int(df["RGB (Hex)"][color_index][1:][k:k+2], 16) for k in range(0, 6, 2))
+            draw_rect(j * (rect_width + margin), i * (rect_height + margin), color, f'{df["Color Name"][color_index]}, {color_index}')
 
     pygame.display.flip()
 
