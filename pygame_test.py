@@ -3,6 +3,7 @@ import sys
 import os
 import numpy as np
 from clustering import get_kmean_color, cluster_points
+from print_image import create_image
 
 def create_screen(image_rect):
     # Set up display
@@ -170,11 +171,26 @@ def main():
     # Run the app
     color_list, cluster_labels = run_app(pygame_image, clustered_pygame, original_array, init_button_color, keep_cluster = True)
     
-    
+    # plot colors
     for idx in range(color_list.shape[0]):
         text = f'color - {color_list[idx]}, studs - {np.sum(cluster_labels == idx)}'
         r, g, b = color_list[idx].tolist()
         print(f"\x1b[38;2;{r};{g};{b}m{text}\x1b[0m")
+    
+    font_path = 'C:\Windows\Fonts\Arial.ttf'
+    rows, cols = cluster_labels.shape[0], cluster_labels.shape[1]
+    # Create the directory if it doesn't exist
+    output_directory = 'output/'
+    os.makedirs(output_directory, exist_ok=True)
+    # Extract a patch of 16x16
+    for i, j in [(i, j) for i in range(0, rows, 16) for j in range(0, cols, 16)]:
+        patch = cluster_labels[i:i+16, j:j+16]
+        # Call the function to print the patch
+        image = create_image(patch, color_list, circle_size=50, font_path = font_path)
+        image.save(f"output/sub_image_{int(i/16)}_{int(j/16)}.png")
+        
+    color_image = create_image(np.array(range(color_list.shape[0])).reshape((1, -1)), color_list, circle_size=50, font_path = font_path)
+    color_image.save(f"output/color_list.png")
 
 if __name__ == "__main__":
     main()
