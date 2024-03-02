@@ -1,5 +1,7 @@
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
+from read_color_list import read_color_list
+
 
 def get_text_color(rgb_color):
     # Calculate luminance to determine if the color is light or dark
@@ -9,9 +11,31 @@ def get_text_color(rgb_color):
     else:
         return (255, 255, 255)  # White text for dark colors
 
-def create_image(label_matrix, rgb_colors, circle_size=5, background_color=(0, 0, 0), font_path=None):
+def create_image(label_matrix, rgb_colors, circle_size=5, background_color=(0, 0, 0), font_path=None, add_color_names=False):
     width = label_matrix.shape[1] * circle_size
     height = label_matrix.shape[0] * circle_size
+        
+    if add_color_names:
+        # add space
+        S = 20
+        height += S
+        # get color name base on L2 for the lego part
+        df = read_color_list()
+        colors = [color.replace('[', '').replace(']', '').split(' ') for color in df["Color"]]
+        colors = [[item for item in color if item != ''] for color in colors]
+        colors = [[int(c) for c in color] for color in colors]
+        color_names = []
+        color_nums = []
+        for rgb in rgb_colors:
+            idx = np.argmin(np.sum(np.abs(colors-rgb), axis=1))
+            color_names.append(df["Name"][idx])
+            color_nums.append(df["Number"][idx])
+            
+        # font
+        font_color = ImageFont.truetype(font_path, int(10))
+
+    else:
+        S = 0
     image = Image.new("RGB", (width, height), background_color)
     draw = ImageDraw.Draw(image)
     
@@ -27,16 +51,20 @@ def create_image(label_matrix, rgb_colors, circle_size=5, background_color=(0, 0
             text_color = get_text_color(color)
             x = j * circle_size
             y = i * circle_size
-            draw.ellipse([x, y, x + circle_size, y + circle_size], fill=color)
+            draw.ellipse([x, y+S, x + circle_size, y + circle_size+S], fill=color)
             # Get label text
             label_text = str(label)
             # Get label text bbox
-            text_bbox = draw.textbbox((x, y), label_text, font=font)
+            text_bbox = draw.textbbox((x, y+S), label_text, font=font)
             # Calculate text position
             text_x = x + (circle_size - (text_bbox[2] - text_bbox[0])) / 2
-            text_y = y + (circle_size - (text_bbox[3] - text_bbox[1])) / 2
+            text_y = y + (circle_size - (text_bbox[3] - text_bbox[1])) / 2 + S
             # Draw label text
             draw.text((text_x, text_y), label_text, fill=text_color, font=font)
+            
+            if add_color_names:
+                draw.text((x, y), color_names[j], fill=(255,255,255), font=font_color)
+                draw.text((text_x, y+10), color_nums[j], fill=(255,255,255), font=font_color)
 
     return image
 

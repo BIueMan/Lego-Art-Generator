@@ -1,0 +1,95 @@
+# line 1
+color - [190 178 148], studs - 513, name - Tan 05
+color - [169 150 122], studs - 415, name - Very Light Coffee S25
+color - [155 145 111], studs - 528, name - Medium Tan S27
+color - [109  98  84], studs - 340, name - Dark Tan S07
+color - [168 181 200], studs - 189, name - Light Royal Blue 212
+color - [119 146 201], studs - 391, name - Med Royal Blue 213
+color - [ 69 117 182], studs - 673, name - Medium Blue 102
+color - [ 54 111 178], studs - 499, name - Dark Azur 321
+color - [ 85 150 183], studs - 548, name - Medium Azur 322
+# line 2
+color - [232 220 171], studs - 513, name - Light Yellow 03
+color - [227 210 129], studs - 415, name - Cool Yellow 226
+color - [203 152  67], studs - 528, name - Flame Yellow Orange 191
+color - [223 186  87], studs - 340, name - Yellow 24
+color - [113 161 196], studs - 189, name - Water Blue S04
+color - [ 82 114 163], studs - 391, name - Azur S24
+color - [ 25  65 148], studs - 673, name - Blue 23
+color - [ 8 29 96], studs - 499, name - Dark Royal Blue 196
+color - [ 6 15 31], studs - 548, name - Earth Blue 140
+# line 3
+color - [212 196 189], studs - 513, name - Skin White S13
+color - [198 169 153], studs - 415, name - Light Flesh S05
+color - [163  64 123], studs - 528, name - Dark Pink 221
+color - [180 126 100], studs - 340, name - Nougat 18
+color - [ 87 101 123], studs - 189, name - Sand Blue 135
+color - [55 68 82], studs - 391, name - Dark Sand Blue S23
+color - [ 93 129 142], studs - 673, name - Turquoise 211
+color - [ 44  90 104], studs - 499, name - Dark Turquoise S17
+color - [ 35  74 102], studs - 548, name - Med Bluish Green S09
+# line 4
+color - [138  97  64], studs - 513, name - Light Coffee S19
+color - [111  78  52], studs - 415, name - Medium Nougat 312
+color - [102  81  62], studs - 528, name - Dark Nougat 128
+color - [29 16 16], studs - 340, name - Dark Brown 308
+color - [131 147  64], studs - 189, name - Lime 119
+color - [ 68 119  65], studs - 391, name - Bright Green 37
+color - [43 84 54], studs - 673, name - Dark Green 28
+color - [ 48 107 120], studs - 499, name - Bright Bluish Green 107
+color - [30 51 81], studs - 548, name - Dark Blu Green S08
+# line 5
+color - [119  68  42], studs - 513, name - Dark Orange 38
+color - [58 36 36], studs - 415, name - Dark Reddish Brown S20
+color - [73 45 34], studs - 528, name - Reddish Brown 192
+color - [176 203 199], studs - 340, name - Aqua 323
+color - [154 172 157], studs - 189, name - Light Sand Green S22
+color - [177 198 128], studs - 391, name - Yellowish Green 326
+color - [186 196 107], studs - 673, name - Medium Yellow Green 115
+color - [111 160  86], studs - 499, name - Emerald Green S21
+color - [73 94 53], studs - 548, name - Forest Green S26
+# line 6
+color - [191 116  69], studs - 513, name - Flame Red Orange 193
+color - [213 109  60], studs - 415, name - Orange 106
+color - [184  76  48], studs - 528, name - Dark Red Orange S14
+color - [141 122 139], studs - 340, name - Light Sand Violet S16
+color - [ 87 113 107], studs - 189, name - Sand Green 151
+color - [92 93 62], studs - 391, name - Olive Green 330
+color - [48 52 24], studs - 673, name - Lotus Leaf Green S01
+color - [27 32 22], studs - 499, name - Army Green S02
+color - [23 34 29], studs - 548, name - Earth Green 141
+# line 7
+color - [217 211 209], studs - 513, name - White 01
+color - [153 155 160], studs - 415, name - Light Stone Grey 208
+color - [120 127 133], studs - 528, name - Medium Stone Grey 194
+color - [171 160 187], studs - 340, name - Light Lavender S12
+color - [128 121 177], studs - 189, name - Lavender 325
+color - [103  79 143], studs - 391, name - Medium Lavender 324
+color - [27 12 88], studs - 673, name - Medium Lilac 268
+color - [112  27  76], studs - 499, name - Dark Red Violet S03
+color - [ 84  32 102], studs - 548, name - Bright Violet 104
+# line 8
+color - [57 64 68], studs - 513, name - Dark Stone Grey 199
+color - [19 21 28], studs - 415, name - Black Grey S15
+color - [2 2 2], studs - 528, name - Black 26
+color - [194 161 154], studs - 340, name - Light Red 100
+color - [168 131 163], studs - 189, name - Light Purple 222
+color - [114  47  79], studs - 391, name - Med Red Violet 22
+color - [181  75 128], studs - 673, name - Peach Red S10
+color - [147  39  34], studs - 499, name - Pearl Red 184
+color - [124  27  21], studs - 548, name - Red 21
+# line 9
+color - [167 117  52], studs - 513, name - Pearl Gold 297
+color - [135  96  41], studs - 415, name - Gold 127
+color - [73 73 73], studs - 528, name - Flat Silver 315
+color - [26 26 26], studs - 340, name - Dark Solver S11
+color - [213  93  94], studs - 189, name - Coral S06
+color - [138  73  65], studs - 391, name - Bright Red Orange 123
+color - [37 17 28], studs - 673, name - Bean Paste Red S18
+color - [120  40  35], studs - 499, name - Tomato Red S28
+color - [67 19 16], studs - 548, name - Dark Red 154
+# line 10
+color - [202 182 148], studs - 513, name - Flesh Tan L12
+color - [189 185 182], studs - 513, name - Flesh pink L10
+color - [193 147 117], studs - 513, name - Medium dark flesh L15
+color - [212 154 134], studs - 513, name - Flesh red L13

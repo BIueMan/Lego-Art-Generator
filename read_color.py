@@ -1,15 +1,16 @@
 import pygame
 import pandas as pd
+from read_color_list import read_color_list
 
 # Initialize pygame
 pygame.init()
 
 # Read the Excel file
-df = pd.read_excel('Data/ColorStud/55-lego-colors.xlsx')
+df = read_color_list()
 
 # Define screen dimensions and colors
-screen_width = 800
-screen_height = 500
+screen_width = 900
+screen_height = 750
 rect_width = 87.5  # increased by 25%
 rect_height = 62.5  # increased by 25%
 margin = 10
@@ -29,7 +30,7 @@ def is_dark(color):
     return brightness < 128  # If brightness is less than 128, color is considered dark
 
 # Function to draw rectangle with color
-def draw_rect(x, y, color, text):
+def draw_rect(x, y, color, text, new_text):
     pygame.draw.rect(screen, color, (x, y, rect_width, rect_height))
     if is_dark(color):
         text_color = white
@@ -38,6 +39,11 @@ def draw_rect(x, y, color, text):
     text_surface = font.render(text, True, text_color)
     text_rect = text_surface.get_rect(center=(x + rect_width / 2, y + rect_height / 2))
     screen.blit(text_surface, text_rect)
+    
+    # Calculate position for new text below current text
+    new_text_surface = font.render(new_text, True, text_color)
+    new_text_rect = new_text_surface.get_rect(center=(x + rect_width / 2, y + rect_height / 2 + text_rect.height))
+    screen.blit(new_text_surface, new_text_rect)
 
 # Main loop
 running = True
@@ -48,13 +54,14 @@ while running:
             running = False
 
     # Draw rectangles with colors from the DataFrame
-    per_line = 7
+    per_line = 9
     for idx in range(len(df)):
-        i, j = idx%per_line, (int)(idx/per_line)
-        color_index = i * (per_line+1) + j
-        if color_index < len(df):
-            color = tuple(int(df["RGB (Hex)"][color_index][1:][k:k+2], 16) for k in range(0, 6, 2))
-            draw_rect(j * (rect_width + margin), i * (rect_height + margin), color, f'{df["Color Name"][color_index]}, {color_index}')
+        i, j = idx//per_line, idx%per_line
+        if idx < len(df):
+            color = df["Color"][idx].replace('[', '').replace(']', '').split(' ')
+            color = [item for item in color if item != '']
+            color = [int(c) for c in color]
+            draw_rect(j * (rect_width + margin), i * (rect_height + margin), color, f'{df["Name"][idx]}', f'{df["Number"][idx]}')
 
     pygame.display.flip()
 
