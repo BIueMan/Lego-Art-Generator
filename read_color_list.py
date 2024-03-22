@@ -1,9 +1,12 @@
 import pandas as pd
+import os
 
 def read_color_list():
     # Read the text file
-    with open('Data\color_list.txt', 'r') as file:
+    os.chdir('Data')
+    with open("color_list.txt", 'r') as file:
         data = file.readlines()
+    os.chdir('..')
 
     # Initialize lists to store parsed data
     names = []

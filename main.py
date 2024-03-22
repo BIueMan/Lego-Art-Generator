@@ -1,66 +1,92 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+import pygame
+import sys
+import os
 import numpy as np
-from tabulate import tabulate
+from clustering import get_kmean_color, cluster_points
+from create_pdf import create_pdf_from_directory
+from print_image import create_image
+from pygame_test import *
+from PIL import Image
 
-# Read the file into a Pandas DataFrame
-color_table = pd.read_excel('Data/ColorTable.xlsx')
-stud_color = pd.read_excel('Data/StudColor.xlsx')
 
-color_table = pd.DataFrame(color_table)
-stud_color = pd.DataFrame(stud_color)
+def main(image_path:str, size:list, k:int):
+    # first get init kmean cluster from the image
+    original_image = Image.open(image_path)
+    original_image = original_image.convert('RGB')
+    original_array = np.array(original_image.resize([16*size[0], 16*size[1]]))
+    original_image = np.array(original_image)
 
-def get_set_parts(color):
-    try:
-        return stud_color[stud_color['Color'] == color]['Set Parts'].tolist()
-    except:
-        return ""
+    points_to_cluster, clustered_array = get_kmean_color(original_array, k)
+    image_bytes = np.ascontiguousarray(clustered_array.astype(np.uint8)).tobytes()
+    clustered_pygame = pygame.image.frombuffer(image_bytes, clustered_array.shape[:2], "RGB")
 
-def get_element(color):
-    try:
-        return stud_color[stud_color['Color'] == color]['Element'].tolist()
-    except:
-        return ""
+    init_button_color = {'color': [], 'loc': []}
+    for _, cluster_color in enumerate(points_to_cluster):
+        image_err = np.linalg.norm(original_image-cluster_color, axis=-1)
 
-color_table['Set_Parts'] = color_table['Color'].apply(get_set_parts)
-color_table['Element'] = color_table['Color'].apply(get_element)
+        loc = np.unravel_index(np.argmin(image_err), image_err.shape)
+        init_button_color['loc'].append(loc)
+        init_button_color['color'].append(original_image[loc])
 
-color_table = color_table[color_table['RGB'].str.len() == 6]
-color_table = color_table[color_table['Set_Parts'].str.len() != 0]
+    pygame.init()
 
-# Display the DataFrame
-print(color_table.columns)
+    # Input image
+    image_path = image_path # os.path.join("Data", "Lenna.png")
+    pygame_image = pygame.image.load(image_path)
+    pygame_image = pygame.transform.scale(pygame_image, (500, 500))
+    clustered_pygame = pygame.transform.scale(clustered_pygame, pygame_image.get_size())
+    # Run the app
+    color_list, cluster_labels = run_app(pygame_image, clustered_pygame, original_array, init_button_color)
+    
+    pygame.init()
+    image_path = os.path.join("Data", "Color_list_image.png")
+    pygame_image = pygame.image.load(image_path)
+    pygame_image = pygame.transform.scale(pygame_image, (500, 500))
+    # update buttton color
+    for idx in range(len(init_button_color['color'])):
+        init_button_color['color'][idx] = color_list[idx]
+        init_button_color['loc'][idx] = (-1, -1)
+    original_array = color_list[cluster_labels.reshape(-1)].reshape(original_array.shape)
+    image_bytes = np.ascontiguousarray(original_array.astype(np.uint8)).tobytes()
+    clustered_pygame = pygame.image.frombuffer(image_bytes, original_array.shape[:2], "RGB")
+    clustered_pygame = pygame.transform.scale(clustered_pygame, pygame_image.get_size())
+        
+    # Run the app
+    color_list, cluster_labels = run_app(pygame_image, clustered_pygame, original_array, init_button_color, keep_cluster = True)
+    
+    # plot colors
+    for idx in range(color_list.shape[0]):
+        text = f'color - {color_list[idx]}, studs - {np.sum(cluster_labels == idx)}'
+        r, g, b = color_list[idx].tolist()
+        print(f"\x1b[38;2;{r};{g};{b}m{text}\x1b[0m")
+    
+    rows, cols = cluster_labels.shape[0], cluster_labels.shape[1]
+    # Create the directory if it doesn't exist
+    os.makedirs('output/', exist_ok=True)
+    os.makedirs('output/image', exist_ok=True)
+    # Extract a patch of 16x16
+    for i, j in [(i, j) for i in range(0, rows, 16) for j in range(0, cols, 16)]:
+        patch = cluster_labels[i:i+16, j:j+16]
+        # Call the function to print the patch
+        image = create_image(patch, color_list, circle_size=50)
+        image.save(f"output/image/sub_image_{int(i/16)}_{int(j/16)}.png")
+        
+    color_image = create_image(np.array(range(color_list.shape[0])).reshape((1, -1)), color_list, circle_size=50, font_path = None, add_color_names=True)
+    color_image.save(f"output/color_list.png")
 
-def hex_to_rgb(hex_color):
-    r = int(hex_color[0:2], 16) / 255.0
-    g = int(hex_color[2:4], 16) / 255.0
-    b = int(hex_color[4:6], 16) / 255.0
-    return r, g, b
+    full_image = create_image(cluster_labels, color_list, circle_size=50, font_path = None, add_number=False)
+    full_image.save(f"output/full_image.png")
 
-def plot_rgb_points(rgb_colors):
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
+    # save images
+    image_dict_path = "output/image"
+    color_image_path = "output/color_list.png"
+    output_path = "output/output.pdf"
+    full_image_path = "output/full_image.png"
 
-    for color in rgb_colors:
-        r, g, b = hex_to_rgb(color)
-        ax.scatter(r, g, b, color=(r, g, b), marker='o')
+    create_pdf_from_directory(image_dict_path, color_image_path, output_path, full_image_path)
 
-    ax.set_xlabel('Red')
-    ax.set_ylabel('Green')
-    ax.set_zlabel('Blue')
-
-    plt.show()
-    # plt.waitforbuttonpress()
-
-# Example usage:
-plot_rgb_points(color_table['RGB'].astype(str))
-
-table_str = tabulate(color_table, tablefmt='grid', headers='keys', showindex=False)
-print(table_str)
-
-lego_batman = pd.read_csv('Data/LegoArtSets/rebrickable_parts_31205-1-jim-lee-batman-collection.csv')
-
-lego_batman = pd.DataFrame(lego_batman)
-table_str = tabulate(lego_batman, tablefmt='grid', headers='keys', showindex=False)
-print(table_str)
+if __name__ == "__main__":
+    image_path = "Data/Lenna.png"
+    size = [4, 4]
+    k_mean = 9
+    main(image_path, size, k_mean)
