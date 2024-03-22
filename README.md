@@ -40,6 +40,14 @@ The program follows these steps:
 4. **Lego Color Assignment**: Another Pygame window opens where the user can manually select Lego colors for each dominant color detected in the image.
 5. **PDF Creation**: Finally, the program generates a PDF instruction for the Lego art and saves it in the `output/` directory.
 
+| 0                                      | 1                                          | 2                                     | 3                                          |
+| ----------------------------------------------- | ----------------------------------------------- | ----------------------------------------------- | ----------------------------------------------- |
+| <img src="output/image/sub_image_0_0.png" width="400"/> | <img src="Data/image/sub_image_0_1.png" width="400"/>        | <img src="output/image/sub_image_0_2.png" width="400"/> | <img src="Data/image/sub_image_0_3.png" width="400"/>        |
+| <img src="output/image/sub_image_1_0.png" width="400"/> | <img src="Data/image/sub_image_1_1.png" width="400"/>        | <img src="output/image/sub_image_1_2.png" width="400"/> | <img src="Data/image/sub_image_1_3.png" width="400"/>        |
+
+<img src="Data/color_list.png" width="400"/>
+
+
 ## Explanation of Functions
 
 Here's an explanation of the functions used in the program:
