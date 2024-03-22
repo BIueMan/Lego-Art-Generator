@@ -2,10 +2,10 @@ import pygame
 import sys
 import os
 import numpy as np
-from clustering import get_kmean_color, cluster_points
-from create_pdf import create_pdf_from_directory
-from print_image import create_image
-from pygame_test import *
+from math_function.clustering import get_kmean_color, cluster_points
+from generate_pdf_func.create_pdf import create_pdf_from_directory
+from generate_pdf_func.generate_pixel_images import create_image
+from generate_pdf_func.run_app import *
 from PIL import Image
 
 

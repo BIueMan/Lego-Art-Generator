@@ -1,0 +1,42 @@
+| Colom | Num  | Color Name        |
+|-------|------|-------------------|
+| 1     | 1    | White             |
+| 2     | 5    | Brick Yellow      |
+| 3     | 21   | Bright Red        |
+| 4     | 23   | Bright Blue       |
+| 5     | 24   | Bright Yellow     |
+| 6     | 26   | Black             |
+| 7     | 28   | Dark Green        |
+| 8     | 37   | Bright Green      |
+| 9     | 38   | Dark Orange       |
+| 10    | 102  | Medium Blue       |
+| 11    | 106  | Bright Orange     |
+| 12    | 119  | Bright Y Green    |
+| 13    | 124  | Bright R Violet   |
+| 14    | 135  | Sand Blue         |
+| 15    | 138  | Sand Yellow       |
+| 16    | 140  | Earth Blue        |
+| 17    | 141  | Earth Green       |
+| 18    | 151  | Sand Green        |
+| 19    | 154  | Dark Red          |
+| 20    | 191  | Flame Y Orange    |
+| 21    | 192  | Reddish Brown     |
+| 22    | 194  | Medium S Grey     |
+| 23    | 199  | Dark Stone Grey   |
+| 24    | 212  | Light Royal Blue  |
+| 25    | 221  | Bright Purple     |
+| 26    | 222  | Light Purple      |
+| 27    | 226  | Cool Yellow       |
+| 28    | 268  | Medium Lilac      |
+| 29    | 283  | Light Nougat      |
+| 30    | 308  | Dark Brown        |
+| 31    | 312  | Medium Nougat     |
+| 32    | 321  | Dark Azur         |
+| 33    | 322  | Medium Azur       |
+| 34    | 323  | Aqua              |
+| 35    | 324  | Medium Lavender   |
+| 36    | 325  | Lavender          |
+| 37    | 326  | Spring Y Green    |
+| 38    | 330  | Olive Green       |
+| 39    | 148  | Pearl Dark Gray   |
+
