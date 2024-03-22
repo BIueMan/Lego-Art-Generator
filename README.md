@@ -42,10 +42,12 @@ The program follows these steps:
 
 | 0                                      | 1                                          | 2                                     | 3                                          |
 | ----------------------------------------------- | ----------------------------------------------- | ----------------------------------------------- | ----------------------------------------------- |
-| <img src="output/image/sub_image_0_0.png" width="400"/> | <img src="Data/image/sub_image_0_1.png" width="400"/>        | <img src="output/image/sub_image_0_2.png" width="400"/> | <img src="Data/image/sub_image_0_3.png" width="400"/>        |
-| <img src="output/image/sub_image_1_0.png" width="400"/> | <img src="Data/image/sub_image_1_1.png" width="400"/>        | <img src="output/image/sub_image_1_2.png" width="400"/> | <img src="Data/image/sub_image_1_3.png" width="400"/>        |
+| <img src="output/image/sub_image_0_0.png" width="200"/> | <img src="output/image/sub_image_0_1.png" width="200"/>        | <img src="output/image/sub_image_0_2.png" width="200"/> | <img src="output/image/sub_image_0_3.png" width="200"/>        |
+| <img src="output/image/sub_image_1_0.png" width="200"/> | <img src="output/image/sub_image_1_1.png" width="200"/>        | <img src="output/image/sub_image_1_2.png" width="200"/> | <img src="output/image/sub_image_1_3.png" width="200"/>        |
+| <img src="output/image/sub_image_2_0.png" width="200"/> | <img src="output/image/sub_image_2_1.png" width="200"/>        | <img src="output/image/sub_image_2_2.png" width="200"/> | <img src="output/image/sub_image_2_3.png" width="200"/>        |
+| <img src="output/image/sub_image_3_0.png" width="200"/> | <img src="output/image/sub_image_3_1.png" width="200"/>        | <img src="output/image/sub_image_3_2.png" width="200"/> | <img src="output/image/sub_image_3_3.png" width="200"/>        |
 
-<img src="Data/color_list.png" width="400"/>
+<img src="output/color_list.png" width="400"/>
 
 
 ## Explanation of Functions
