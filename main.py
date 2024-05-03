@@ -4,8 +4,9 @@ import os
 import numpy as np
 from math_function.clustering import get_kmean_color, cluster_points
 from generate_pdf_func.create_pdf import create_pdf_from_directory
-from generate_pdf_func.generate_pixel_images import create_image
+from generate_pdf_func.generate_pixel_images import generate_pixel_images
 from generate_pdf_func.run_app import *
+from generate_pdf_func.personal_touch import personal_touch
 from PIL import Image
 
 
@@ -54,6 +55,8 @@ def main(image_path:str, size:list, k:int):
     # Run the app
     color_list, cluster_labels = run_app(pygame_image, clustered_pygame, original_array, init_button_color, keep_cluster = True)
     
+    color_list, cluster_labels = personal_touch(color_list, cluster_labels)
+    
     # plot colors
     for idx in range(color_list.shape[0]):
         text = f'color - {color_list[idx]}, studs - {np.sum(cluster_labels == idx)}'
@@ -68,13 +71,13 @@ def main(image_path:str, size:list, k:int):
     for i, j in [(i, j) for i in range(0, rows, 16) for j in range(0, cols, 16)]:
         patch = cluster_labels[i:i+16, j:j+16]
         # Call the function to print the patch
-        image = create_image(patch, color_list, circle_size=50)
+        image = generate_pixel_images(patch, color_list, circle_size=50)
         image.save(f"output/image/sub_image_{int(i/16)}_{int(j/16)}.png")
         
-    color_image = create_image(np.array(range(color_list.shape[0])).reshape((1, -1)), color_list, circle_size=50, font_path = None, add_color_names=True)
+    color_image = generate_pixel_images(np.array(range(color_list.shape[0])).reshape((1, -1)), color_list, circle_size=50, font_path = None, add_color_names=True)
     color_image.save(f"output/color_list.png")
 
-    full_image = create_image(cluster_labels, color_list, circle_size=50, font_path = None, add_number=False)
+    full_image = generate_pixel_images(cluster_labels, color_list, circle_size=50, font_path = None, add_number=False)
     full_image.save(f"output/full_image.png")
 
     # save images
@@ -86,7 +89,7 @@ def main(image_path:str, size:list, k:int):
     create_pdf_from_directory(image_dict_path, color_image_path, output_path, full_image_path)
 
 if __name__ == "__main__":
-    image_path = "Data/Lenna.png"
+    image_path = "Data/pokemon.jpeg"
     size = [4, 4]
     k_mean = 9
     main(image_path, size, k_mean)
