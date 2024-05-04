@@ -89,7 +89,7 @@ def main(image_path:str, size:list, k:int):
     create_pdf_from_directory(image_dict_path, color_image_path, output_path, full_image_path)
 
 if __name__ == "__main__":
-    image_path = "Data/Lenna.png"
+    image_path = "Data/pokemon.jpeg"
     size = [4, 4]
     k_mean = 9
     main(image_path, size, k_mean)

@@ -51,10 +51,10 @@ The program follows these steps:
 <img src="output/color_list.png" width="400"/>
 
 ## personal touch
-here, i have used the **personal touch** to add the mouth
+here, i have used the **personal touch** to add the mouth, fix heart and shadow
 | with out                                      | with                                          |
 | ----------------------------------------------- | ----------------------------------------------- |
-| <img src="output/personal_touch_0.png" width="400"/> | <img src="output/personal_touch_1.png" width="400"/>        |
+| <img src="output/personal_touch_0.png" width="400"/> | <img src="output/personal_touch_fix.png" width="400"/>        |
 
 
 ## Explanation of Functions
