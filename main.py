@@ -44,9 +44,9 @@ def main(image_path:str, size:list, k:int):
     pygame_image = pygame.image.load(image_path)
     pygame_image = pygame.transform.scale(pygame_image, (500, 500))
     # update buttton color
-    for idx in range(len(init_button_color['color'])):
-        init_button_color['color'][idx] = color_list[idx]
-        init_button_color['loc'][idx] = (-1, -1)
+    init_button_color['color'] = np.copy(color_list)
+    init_button_color['loc'] = -1 * np.ones((len(color_list), 2), dtype=np.int16)
+    
     original_array = color_list[cluster_labels.reshape(-1)].reshape(original_array.shape)
     image_bytes = np.ascontiguousarray(original_array.astype(np.uint8)).tobytes()
     clustered_pygame = pygame.image.frombuffer(image_bytes, original_array.shape[:2], "RGB")
@@ -89,7 +89,7 @@ def main(image_path:str, size:list, k:int):
     create_pdf_from_directory(image_dict_path, color_image_path, output_path, full_image_path)
 
 if __name__ == "__main__":
-    image_path = "Data/pokemon.jpeg"
+    image_path = "Data/Lenna.png"
     size = [4, 4]
     k_mean = 9
     main(image_path, size, k_mean)

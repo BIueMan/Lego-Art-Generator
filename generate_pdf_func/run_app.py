@@ -3,7 +3,7 @@ import sys
 import os
 import numpy as np
 from math_function.clustering import get_kmean_color, cluster_points
-from generate_pdf_func.generate_pixel_images import create_image
+from generate_pdf_func.generate_pixel_images import generate_pixel_images
 
 def create_screen(image_rect):
     # Set up display
@@ -99,7 +99,7 @@ def run_app(pygame_image, clustered_pygame, original_array, init_button_color, k
         # Draw red dots at selected points
         font = pygame.font.Font(None, 24)
         for num, button in enumerate(buttons):
-            if buttons[num]['loc'] != None:
+            if buttons[num]['loc'] is not None:
                 pygame.draw.circle(screen, (255, 0, 0), buttons[num]['loc'], 5)
 
                 text_surface = font.render(str(num), True, (255, 255, 255))
@@ -186,10 +186,10 @@ def main():
     for i, j in [(i, j) for i in range(0, rows, 16) for j in range(0, cols, 16)]:
         patch = cluster_labels[i:i+16, j:j+16]
         # Call the function to print the patch
-        image = create_image(patch, color_list, circle_size=50, font_path = font_path)
+        image = generate_pixel_images(patch, color_list, circle_size=50, font_path = font_path)
         image.save(f"output/image/sub_image_{int(i/16)}_{int(j/16)}.png")
         
-    color_image = create_image(np.array(range(color_list.shape[0])).reshape((1, -1)), color_list, circle_size=50, font_path = font_path, add_color_names=True)
+    color_image = generate_pixel_images(np.array(range(color_list.shape[0])).reshape((1, -1)), color_list, circle_size=50, font_path = font_path, add_color_names=True)
     color_image.save(f"output/color_list.png")
 
 if __name__ == "__main__":

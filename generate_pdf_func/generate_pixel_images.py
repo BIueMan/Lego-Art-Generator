@@ -31,7 +31,7 @@ def try_to_select_font():
     return font_path
 
 
-def create_image(label_matrix, rgb_colors, circle_size=5, background_color=(0, 0, 0), font_path=None, add_color_names=False, add_number = True):
+def generate_pixel_images(label_matrix, rgb_colors, circle_size=5, background_color=(0, 0, 0), font_path=None, add_color_names=False, add_number = True):
     if not font_path:
         font_path = try_to_select_font()
 
@@ -108,5 +108,5 @@ if __name__ == "__main__":
                         [128, 128, 0], # Color for label 7
                         [0, 128, 128]])# Color for label 8
 
-    image = create_image(label_matrix, rgb_colors, circle_size=50, font_path = None)
+    image = generate_pixel_images(label_matrix, rgb_colors, circle_size=50, font_path = None)
     image.save("output.png")
